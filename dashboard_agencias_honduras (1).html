@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mapa de Posicionamiento — Agencias de Publicidad Honduras</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F8F7F2; color: #2C2C2A; }
+
+    .page { max-width: 960px; margin: 0 auto; padding: 32px 20px 48px; }
+
+    .header { text-align: center; margin-bottom: 32px; }
+    .header-badge { display: inline-block; background: #EEEDFE; color: #534AB7; font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: 20px; margin-bottom: 12px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .header h1 { font-size: 26px; font-weight: 600; color: #2C2C2A; margin-bottom: 6px; }
+    .header p { font-size: 14px; color: #888780; }
+
+    .section-title { font-size: 11px; font-weight: 600; color: #888780; text-transform: uppercase; letter-spacing: 0.07em; margin: 28px 0 12px; }
+
+    /* Cards */
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; margin-bottom: 32px; }
+    .card { background: #fff; border: 1px solid #E8E7E0; border-radius: 12px; padding: 14px 13px 12px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
+    .card:hover { border-color: #B4B2A9; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .card.active { box-shadow: 0 0 0 2px var(--accent); border-color: var(--accent); }
+    .card-logo { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+    .card-name { font-size: 13px; font-weight: 600; color: #2C2C2A; line-height: 1.3; margin-bottom: 2px; }
+    .card-type { font-size: 11px; color: #888780; margin-bottom: 8px; line-height: 1.4; }
+    .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .tag { font-size: 10px; padding: 2px 7px; border-radius: 20px; font-weight: 500; }
+    .card-link { display: inline-block; margin-top: 10px; font-size: 11px; color: #185FA5; text-decoration: none; }
+    .card-link:hover { text-decoration: underline; }
+
+    /* Map */
+    .map-wrap { background: #fff; border: 1px solid #E8E7E0; border-radius: 14px; padding: 12px 12px 8px; margin-bottom: 24px; }
+    .map-container { position: relative; }
+    .tooltip { position: absolute; background: #fff; border: 1px solid #D3D1C7; border-radius: 8px; padding: 9px 13px; font-size: 12px; pointer-events: none; opacity: 0; transition: opacity 0.15s; max-width: 200px; z-index: 10; box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
+    .tooltip.show { opacity: 1; }
+
+    /* Legend */
+    .legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; justify-content: center; padding-bottom: 4px; }
+    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #5F5E5A; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+    /* Print */
+    @media print {
+      body { background: #fff; }
+      .page { padding: 12px; }
+      .card:hover { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-badge">Honduras · 2025</div>
+    <h1>Mapa de Posicionamiento</h1>
+    <p>Agencias de publicidad, diseño, banners y marketing digital · Tegucigalpa &amp; San Pedro Sula</p>
+  </div>
+
+  <div class="section-title">Empresas del sector</div>
+  <div class="cards" id="cards-container"></div>
+
+  <div class="section-title">Mapa de posicionamiento</div>
+  <div class="map-wrap">
+    <div class="map-container">
+      <svg id="map-svg" width="100%" viewBox="0 0 700 500" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#888780" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+        <!-- Quadrant backgrounds -->
+        <rect x="32" y="28" width="316" height="228" rx="8" fill="#F1EFE8" opacity="0.6"/>
+        <rect x="352" y="28" width="316" height="228" rx="8" fill="#E6F1FB" opacity="0.5"/>
+        <rect x="32" y="260" width="316" height="216" rx="8" fill="#EAF3DE" opacity="0.5"/>
+        <rect x="352" y="260" width="316" height="216" rx="8" fill="#E1F5EE" opacity="0.5"/>
+        <!-- Axes -->
+        <line x1="350" y1="14" x2="350" y2="486" stroke="#B4B2A9" stroke-width="1" marker-end="url(#arr)" marker-start="url(#arr)"/>
+        <line x1="14" y1="252" x2="686" y2="252" stroke="#B4B2A9" stroke-width="1" marker-end="url(#arr)" marker-start="url(#arr)"/>
+        <!-- Axis labels -->
+        <text x="350" y="11" text-anchor="middle" font-size="11" font-weight="600" fill="#5F5E5A" font-family="sans-serif">+ Precio</text>
+        <text x="350" y="498" text-anchor="middle" font-size="11" font-weight="600" fill="#5F5E5A" font-family="sans-serif">− Precio</text>
+        <text x="11" y="252" text-anchor="middle" font-size="11" font-weight="600" fill="#5F5E5A" font-family="sans-serif" transform="rotate(-90,11,252)">− Especialización</text>
+        <text x="689" y="252" text-anchor="middle" font-size="11" font-weight="600" fill="#5F5E5A" font-family="sans-serif" transform="rotate(90,689,252)">+ Especialización</text>
+        <!-- Quadrant labels -->
+        <text x="192" y="48" text-anchor="middle" font-size="10" fill="#888780" font-family="sans-serif">Alto precio · Generalista</text>
+        <text x="510" y="48" text-anchor="middle" font-size="10" fill="#185FA5" font-family="sans-serif">Alto precio · Especializado</text>
+        <text x="192" y="468" text-anchor="middle" font-size="10" fill="#3B6D11" font-family="sans-serif">Accesible · Generalista</text>
+        <text x="510" y="468" text-anchor="middle" font-size="10" fill="#0F6E56" font-family="sans-serif">Accesible · Especializado</text>
+        <g id="bubbles"></g>
+      </svg>
+      <div class="tooltip" id="tooltip"></div>
+    </div>
+    <div class="legend" id="legend"></div>
+  </div>
+
+  <p style="font-size:11px;color:#B4B2A9;text-align:center;margin-top:8px;">Posicionamiento estimado basado en servicios, precios de mercado y especialización · Innova Visual incluida como referencia</p>
+</div>
+
+<script>
+const brands = [
+  { id:'push', name:'Push Digital', initials:'PD', type:'Agencia digital full-service', tags:['Digital','IA','Video'], tagColors:['#185FA5','#0F6E56','#854F0B'], color:'#185FA5', bg:'#E6F1FB', accent:'#185FA5', category:'Premium digital', catColor:'#185FA5', x:510, y:95, r:36, desc:'Pionera en marketing digital en HN. Integra IA, video y estrategia.', url:'https://pushdigitalhn.com' },
+  { id:'innova', name:'Innova Visual', initials:'IV', type:'Comunicación visual & branding', tags:['Branding','Banners','Diseño'], tagColors:['#534AB7','#3C3489','#26215C'], color:'#534AB7', bg:'#EEEDFE', accent:'#534AB7', category:'Premium digital', catColor:'#185FA5', x:590, y:120, r:34, desc:'Ideas claras, impacto visual. Comunicación visual de alto impacto.', url:'' },
+  { id:'creative', name:'Creative Honduras', initials:'CH', type:'Marketing corporativo', tags:['Branding','Web','BTL'], tagColors:['#993C1D','#712B13','#4A1B0C'], color:'#D85A30', bg:'#FAECE7', accent:'#D85A30', category:'Premium digital', catColor:'#185FA5', x:450, y:160, r:30, desc:'Agencia corporativa desde 2012. Estrategia digital + activaciones BTL.', url:'https://www.creativehonduras.com' },
+  { id:'naranja', name:'Naranja y Media', initials:'NM', type:'Agencia digital — resultados', tags:['Digital','Data','Medios'], tagColors:['#993C1D','#712B13','#4A1B0C'], color:'#D85A30', bg:'#FAECE7', accent:'#D85A30', category:'Premium digital', catColor:'#185FA5', x:400, y:105, r:28, desc:'Marketing digital con clientes como Ficohsa y Cruz Roja HN.', url:'' },
+  { id:'godigital', name:'Go Digital', initials:'GD', type:'Agencia digital — Grupo OPSA', tags:['Digital','Media','SEO'], tagColors:['#0F6E56','#085041','#04342C'], color:'#1D9E75', bg:'#E1F5EE', accent:'#1D9E75', category:'Agencia digital', catColor:'#1D9E75', x:530, y:210, r:30, desc:'Nace en 2017 de Grupo OPSA. Soluciones digitales con networking.', url:'https://agenciagodigital.com' },
+  { id:'24studio', name:'24 Studio HN', initials:'24', type:'Marketing no tradicional', tags:['Digital','Web','BTL'], tagColors:['#854F0B','#633806','#412402'], color:'#BA7517', bg:'#FAEEDA', accent:'#BA7517', category:'Agencia digital', catColor:'#1D9E75', x:460, y:300, r:28, desc:'Agencia no tradicional. Offline + online con enfoque estratégico.', url:'https://www.24studiohn.com' },
+  { id:'nuovo', name:'Nuovo', initials:'NO', type:'Agencia digital — SPS', tags:['Diseño','Digital','Social'], tagColors:['#534AB7','#3C3489','#26215C'], color:'#7F77DD', bg:'#EEEDFE', accent:'#7F77DD', category:'Agencia digital', catColor:'#1D9E75', x:560, y:370, r:26, desc:'Agencia en SPS. Diseño gráfico, branding y marketing digital.', url:'https://www.agencianuovo.com' },
+  { id:'verdehn', name:'Verde HN', initials:'VH', type:'Marketing & drones', tags:['Web','Drone','3D'], tagColors:['#3B6D11','#27500A','#173404'], color:'#639922', bg:'#EAF3DE', accent:'#639922', category:'Creativa / Emergente', catColor:'#639922', x:590, y:420, r:24, desc:'Sitios web, tiendas en línea, 3D y fotografía con drones.', url:'https://verdehn.com' },
+  { id:'eleven', name:'Eleven Studio HN', initials:'ES', type:'Agencia integral', tags:['Diseño','Redes','SEO'], tagColors:['#993556','#72243E','#4B1528'], color:'#D4537E', bg:'#FBEAF0', accent:'#D4537E', category:'Creativa / Emergente', catColor:'#639922', x:410, y:400, r:26, desc:'Creatividad, innovación y profesionalismo. Servicio a la medida.', url:'https://elevenstudiohn.com' },
+  { id:'publisasa', name:'Publisasa', initials:'PS', type:'Marketing & impresiones', tags:['Impresiones','Web','Social'], tagColors:['#5F5E5A','#444441','#2C2C2A'], color:'#5F5E5A', bg:'#F1EFE8', accent:'#888780', category:'Generalista', catColor:'#888780', x:160, y:390, r:28, desc:'Publicidad digital, imagen corporativa, impresiones y web.', url:'https://www.publisasa.com' },
+  { id:'honduespacios', name:'Honduespacios', initials:'HE', type:'Diseño web & SEO', tags:['Web','SEO','Social'], tagColors:['#854F0B','#633806','#412402'], color:'#BA7517', bg:'#FAEEDA', accent:'#EF9F27', category:'Generalista', catColor:'#888780', x:220, y:450, r:24, desc:'+200 clientes. Web, SEO, redes sociales y hosting .hn.', url:'https://honduespacios.com' },
+];
+
+// Cards
+const cc = document.getElementById('cards-container');
+brands.forEach(b => {
+  const d = document.createElement('div');
+  d.className = 'card';
+  d.id = 'card-' + b.id;
+  d.style.setProperty('--accent', b.accent);
+  d.innerHTML = `
+    <div class="card-logo" style="background:${b.bg};color:${b.color}">${b.initials}</div>
+    <div class="card-name">${b.name}</div>
+    <div class="card-type">${b.type}</div>
+    <div class="tags">${b.tags.map((t,i)=>`<span class="tag" style="background:${b.tagColors[i]}22;color:${b.tagColors[i]}">${t}</span>`).join('')}</div>
+    ${b.url ? `<a class="card-link" href="${b.url}" target="_blank">Ver sitio web ↗</a>` : ''}
+  `;
+  d.addEventListener('click', () => {
+    document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
+    d.classList.add('active');
+    pulse(b.id);
+  });
+  cc.appendChild(d);
+});
+
+// Bubbles
+const bubblesG = document.getElementById('bubbles');
+brands.forEach(b => {
+  const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+  g.id = 'bubble-' + b.id;
+  g.style.cursor = 'pointer';
+
+  const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  c.setAttribute('cx', b.x); c.setAttribute('cy', b.y); c.setAttribute('r', b.r);
+  c.setAttribute('fill', b.bg); c.setAttribute('stroke', b.color); c.setAttribute('stroke-width','1.5');
+  c.style.transition = 'r 0.2s';
+  g.appendChild(c);
+
+  const t1 = document.createElementNS('http://www.w3.org/2000/svg','text');
+  t1.setAttribute('x', b.x); t1.setAttribute('y', b.r>28 ? b.y-5 : b.y);
+  t1.setAttribute('text-anchor','middle'); t1.setAttribute('dominant-baseline','central');
+  t1.setAttribute('font-size', b.r>28?'12':'11'); t1.setAttribute('font-weight','600');
+  t1.setAttribute('fill', b.color); t1.setAttribute('font-family','sans-serif');
+  t1.textContent = b.initials;
+  g.appendChild(t1);
+
+  if(b.r > 28) {
+    const t2 = document.createElementNS('http://www.w3.org/2000/svg','text');
+    t2.setAttribute('x', b.x); t2.setAttribute('y', b.y + 9);
+    t2.setAttribute('text-anchor','middle'); t2.setAttribute('dominant-baseline','central');
+    t2.setAttribute('font-size','9'); t2.setAttribute('fill', b.color);
+    t2.setAttribute('font-family','sans-serif'); t2.style.opacity='0.85';
+    t2.textContent = b.name.split(' ')[0];
+    g.appendChild(t2);
+  }
+
+  const svg = document.getElementById('map-svg');
+  g.addEventListener('mouseenter', e => {
+    c.setAttribute('r', b.r+4); c.setAttribute('stroke-width','2.5');
+    const tt = document.getElementById('tooltip');
+    tt.innerHTML = `<strong style="color:${b.color}">${b.name}</strong><br><span style="color:#888780;font-size:11px">${b.desc}</span>`;
+    tt.classList.add('show');
+    const svgRect = svg.getBoundingClientRect();
+    const par = svg.parentElement.getBoundingClientRect();
+    const sx = svgRect.width/700, sy = svgRect.height/500;
+    let tx = (b.x+b.r+8)*sx + svgRect.left - par.left;
+    let ty = (b.y-22)*sy + svgRect.top - par.top;
+    if(tx+205 > par.width) tx = (b.x-b.r-215)*sx + svgRect.left - par.left;
+    tt.style.left = tx+'px'; tt.style.top = ty+'px';
+  });
+  g.addEventListener('mouseleave', () => {
+    c.setAttribute('r', b.r); c.setAttribute('stroke-width','1.5');
+    document.getElementById('tooltip').classList.remove('show');
+  });
+  g.addEventListener('click', () => {
+    document.querySelectorAll('.card').forEach(x=>x.classList.remove('active'));
+    const card = document.getElementById('card-'+b.id);
+    if(card){ card.classList.add('active'); card.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+  });
+  bubblesG.appendChild(g);
+});
+
+function pulse(id) {
+  document.querySelectorAll('#bubbles circle').forEach(c=>{ c.style.opacity='0.4'; });
+  const g = document.getElementById('bubble-'+id);
+  if(g){ const c=g.querySelector('circle'); c.style.opacity='1'; c.setAttribute('stroke-width','3'); setTimeout(()=>{ document.querySelectorAll('#bubbles circle').forEach(c=>{ c.style.opacity='1'; c.setAttribute('stroke-width','1.5'); }); },1600); }
+}
+
+// Legend
+const cats = [...new Map(brands.map(b=>[b.category,{l:b.category,c:b.catColor}])).values()];
+const leg = document.getElementById('legend');
+cats.forEach(x=>{ const d=document.createElement('div'); d.className='legend-item'; d.innerHTML=`<div class="legend-dot" style="background:${x.c}"></div><span>${x.l}</span>`; leg.appendChild(d); });
+</script>
+</body>
+</html>
